@@ -156,6 +156,18 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# this project's virtualenv is named llmapp, which none of the generic
+# names above match - without this, git add . commits ~348MB of Windows
+# binaries that stay in history forever
+llmapp/
+
+# Repository cloned at runtime for analysis - not part of this project
+repo/
+
+# Notebook scratch output: a generated Chroma index, and a cloned repo that
+# carries its own .git directory (committing that would nest a repo in a repo)
+research/data/
+research/test_repo/
 
 # Spyder project settings
 .spyderproject

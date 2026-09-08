@@ -1,0 +1,30 @@
+# Virtualenv - Windows-built, useless in a Linux container, and huge
+llmapp/
+venv/
+.venv/
+
+# Secrets - never bake these into an image.
+# Pass at runtime with --env-file or the platform's secrets manager.
+.env
+
+# Git metadata
+.git/
+.gitignore
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local experiments not needed at runtime
+research/
+demo/
+
+# The repo being analyzed - cloned at runtime by the app
+repo/
+
+# Editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
