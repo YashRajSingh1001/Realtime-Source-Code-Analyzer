@@ -29,9 +29,17 @@ RUN apt-get update \
     && apt-get purge -y --auto-remove build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Hugging Face Spaces run the container as uid 1000 rather than root. The
+# app writes into its working directory when it indexes - repo/ for the
+# clone, db/ for the rebuilt index - so that directory has to belong to
+# that user. Without this the Space fails on ingestion with permission
+# errors while working perfectly on a local docker run as root.
+RUN useradd -m -u 1000 user && chown -R user:user /app
+USER user
+
 # Source code last, because it changes most often.
 # .dockerignore keeps the venv, .env and .git out of this.
-COPY . .
+COPY --chown=user:user . .
 
 EXPOSE 8080
 

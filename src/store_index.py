@@ -2,6 +2,7 @@ from src.helper import load_repo, text_splitter, load_embedding
 from dotenv import load_dotenv
 from langchain.vectorstores import Chroma
 import os
+import shutil
 
 load_dotenv()
 
@@ -23,10 +24,13 @@ def create_index(repo_path="repo/", persist_directory=PERSIST_DIR):
     """
     embeddings = load_embedding()
 
-    #drop the previous collection so the new repo starts clean
-    existing = Chroma(persist_directory=persist_directory,
-                      embedding_function=embeddings)
-    existing.delete_collection()
+    #Start from an empty directory rather than dropping the collection.
+    #delete_collection() detaches a collection but reclaims neither its HNSW
+    #segment files nor its rows in the embeddings table, so repeated
+    #ingestions would pile up ~6MB of orphaned index each time until the
+    #disk filled. Removing the directory is the only way to actually free it.
+    if os.path.isdir(persist_directory):
+        shutil.rmtree(persist_directory)
 
     documents = load_repo(repo_path)
     text_chunks = text_splitter(documents)
